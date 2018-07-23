@@ -1,0 +1,14 @@
+[
+    {
+        "title": "Pizza",
+        "subtitle": "Queijo",
+        "text": "R$ 44,00",
+        "image": "https://media-cdn.tripadvisor.com/media/photo-s/0f/07/37/12/pizza-marguerita-mussarela.jpg"
+    },
+    {
+        "title": "Refrigerante",
+        "subtitle": "Coca-cola",
+        "text": "R$ 6,60",
+        "image": "http://images.mentalfloss.com/sites/default/files/styles/mf_image_16x9/public/iStock-487787108.jpg?itok=H68uDcDx&resize=1100x619"
+    }
+]

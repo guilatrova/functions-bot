@@ -7,6 +7,7 @@ https://aka.ms/abs-node-waterfall
 var builder = require("botbuilder");
 var botbuilder_azure = require("botbuilder-azure");
 var path = require('path');
+var menu = require("./menu.json");
 
 var useEmulator = (process.env.NODE_ENV == 'development');
 
