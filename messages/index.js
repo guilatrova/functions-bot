@@ -33,7 +33,7 @@ var bot = new builder.UniversalBot(connector, function (session, args) {
 bot.localePath(path.join(__dirname, './locale'));
 bot.set('storage', tableStorage);
 
-const LuisModelUrl = 'https://westus.api.cognitive.microsoft.com/luis/v2.0/apps/c864ce71-18aa-4a03-b5c4-65614c96a08f?subscription-key=bc2acfaf336f4bbe9315e47c34af6a90&verbose=true&timezoneOffset=0&q=';
+const LuisModelUrl = "https://westus.api.cognitive.microsoft.com/luis/v2.0/apps/c864ce71-18aa-4a03-b5c4-65614c96a08f?subscription-key=bc2acfaf336f4bbe9315e47c34af6a90&staging=true&verbose=true&timezoneOffset=-180&q=";
 
 // Create a recognizer that gets intents from LUIS, and add it to the bot
 var recognizer = new builder.LuisRecognizer(LuisModelUrl);
@@ -106,6 +106,7 @@ if (useEmulator) {
     server.listen(3978, function () {
         console.log('test bot endpont at http://localhost:3978/api/messages');
     });
+    bot.set('storage', new builder.MemoryBotStorage());
     server.post('/api/messages', connector.listen());
 } else {
     module.exports = connector.listen();
