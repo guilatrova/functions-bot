@@ -39,34 +39,66 @@ const LuisModelUrl = 'https://westus.api.cognitive.microsoft.com/luis/v2.0/apps/
 var recognizer = new builder.LuisRecognizer(LuisModelUrl);
 bot.recognizer(recognizer);
 
-// Add a dialog for each intent that the LUIS app recognizes.
-// See https://docs.microsoft.com/en-us/bot-framework/nodejs/bot-builder-nodejs-recognize-intent-luis 
-bot.dialog('GreetingDialog',
-    (session) => {
-        session.send('You reached the Greeting intent. You said \'%s\'.', session.message.text);
-        session.endDialog();
-    }
-).triggerAction({
-    matches: 'Greeting'
-})
+bot.dialog('greetings', [
+    (session) => session.send("Boa noite, Pizzaria Kalabalis, o que deseja?")
+]).triggerAction({
+    matches: 'greetings'
+});
 
-bot.dialog('HelpDialog',
-    (session) => {
-        session.send('You reached the Help intent. You said \'%s\'.', session.message.text);
-        session.endDialog();
-    }
-).triggerAction({
-    matches: 'Help'
-})
+bot.dialog('create-order', [
+    (session, args) => {
+        const entities = args.intent.entities;
+        if (entities.length > 0) {
+            if (!session.conversationData.order) {
+                session.conversationData.order = [];
+            }
 
-bot.dialog('CancelDialog',
-    (session) => {
-        session.send('You reached the Cancel intent. You said \'%s\'.', session.message.text);
-        session.endDialog();
+            session.conversationData.order = session.conversationData.order.concat(
+                entities.map(item => item.entity)
+            );
+
+            session.send("Pedido adicionado");
+        }
+        else {
+            session.beginDialog('menu-request');
+        }
     }
-).triggerAction({
-    matches: 'Cancel'
-})
+]).triggerAction({
+    matches: 'create-order'
+});
+
+bot.dialog('menu-request', [
+    (session, args) => {
+        const cards = menu.map(item => createHeroCard(session, item));
+
+        const carousel = new builder.Message(session)
+            .attachmentLayout(builder.AttachmentLayout.carousel)
+            .attachments(cards);
+
+        session.send(carousel);
+    }
+]).triggerAction({
+    matches: 'menu-request'
+});
+
+bot.dialog('working-hours', [
+    (session, args) => session.send("Trabalhamos das 11:00 às 15:00 e das 18:00 às 24:00")
+]).triggerAction({
+    matches: 'working-hours'
+});
+
+function createHeroCard(session, order) {
+    return new builder.HeroCard(session)
+        .title(order.title)
+        .subtitle(order.subtitle)
+        .text(order.text)
+        .images([
+            builder.CardImage.create(session, order.image)
+        ])
+        .buttons([
+            builder.CardAction.postBack(session, `Adicionar ao pedido: ${order.title}`, "Adicionar")
+        ]);
+}
 
 if (useEmulator) {
     var restify = require('restify');
